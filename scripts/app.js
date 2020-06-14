@@ -12,8 +12,19 @@ app.controller('mainController', [
       base: 'http://api.openweathermap.org/data/2.5/weather?q=',
       APPID: '794ee95e63c5a32aaf88cd813fa2e425',
     };
-
-    let countryList = [];
+    let countryList = [],
+      filteredList = [];
+    $scope.filterCountry = function (test) {
+      const regEx = new RegExp(test, 'gi');
+      console.log('I am called ', $scope.filterData, regEx, test);
+      if (countryList && countryList.length) {
+        filteredList = countryList.filter((item) => regEx.test(item.name));
+      }
+      // Update display Data and page num
+      $scope.displayData = filteredList.slice(0, 16);
+      $scope.curPage = 1;
+      $scope.pages = new Array(parseInt(filteredList.length / 16) + 1);
+    };
     const getWeatherReport = function (name) {
       const url = `${weatherDetails.base}${name}&APPID=${weatherDetails.APPID}`;
       httpService.get(url).then(
@@ -45,10 +56,18 @@ app.controller('mainController', [
       $scope.curPage = page;
       const start = 16 * (page - 1),
         end = 16 * page;
-      $scope.displayData = countryList.slice(start, end);
+      if (filteredList.length === countryList.length) {
+        $scope.displayData = filteredList.slice(start, end);
+      } else {
+        $scope.displayData = countryList.slice(start, end);
+      }
     };
     $scope.updateState = function () {
       $scope.showList = !$scope.showList;
+      filteredList.length = 0;
+      $scope.curPage = 1;
+      $scope.pages = new Array(parseInt(countryList.length / 16) + 1);
+      $scope.displayData = countryList.slice(0, 16);
     };
 
     $scope.getData = function (url) {
