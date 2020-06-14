@@ -5,16 +5,18 @@ app.controller('mainController', [
   'httpService',
   function ($scope, httpService) {
     $scope.heading = 'My Weather report';
-    const allCountriesURL = 'https://restcountries.eu/rest/v2/all';
+    $scope.allCountriesURL = 'https://restcountries.eu/rest/v2/all';
+    $scope.className = 'grid';
     const weatherDetails = {
       base: 'http://api.openweathermap.org/data/2.5/weather?q=',
       APPID: '794ee95e63c5a32aaf88cd813fa2e425',
     };
 
-    getData = function (url) {
+    $scope.getData = function (url) {
       httpService.get(url).then(
         (data) => {
-          console.log('Success ', data);
+          $scope.countryList = data.data;
+          // console.log($scope.countryList, ' countryList');
         },
         (err) => {
           console.log(err, ' from error block');
@@ -36,3 +38,17 @@ app.factory('httpService', [
     return httpObj;
   },
 ]);
+
+app.directive('country', function () {
+  return {
+    restrict: 'E',
+    scope: {
+      countryInfo: '=info',
+    },
+    template: `
+    <div ng-class="{'country grid': $parent.className == 'grid', 'country list': $parent.className == 'list'}">
+      <span>{{countryInfo['name']}}</span>
+    </div>
+    `,
+  };
+});

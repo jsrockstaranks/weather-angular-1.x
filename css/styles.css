@@ -1,0 +1,30 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+.cp {
+  cursor: pointer;
+}
+
+.country {
+  font-size: 18px;
+  border: 1px solid gray;
+  cursor: pointer;
+  margin: 1px;
+  border-radius: 4px;
+}
+.country.list {
+  display: block;
+  text-align: center;
+  height: 50px;
+  line-height: 6vh;
+}
+.country.grid {
+  display: inline-block;
+  width: 24%;
+  margin: 1px;
+  height: 150px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 18vh;
+}
