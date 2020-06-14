@@ -9,18 +9,41 @@
   </head>
   <body ng-app="app">
     <div ng-controller="mainController" ng-init="getData(allCountriesURL)">
-      <h1>{{heading}}</h1>
-      <div class="cp">
-        <span ng-click="className = 'grid'">Grid View</span>
-        <span ng-click="className = 'list'">List View</span>
+      <div ng-if="showList">
+        <h1>{{heading}}</h1>
+        <div class="cp">
+          <span ng-click="className = 'grid'">Grid View</span>
+          <span ng-click="className = 'list'">List View</span>
+        </div>
+        <span
+          ng-if="displayData && displayData.length"
+          ng-repeat="(key, country) in displayData"
+        >
+          <country info="country" ng-click="openWeather(country)"></country>
+        </span>
+        <div class="pages">
+          <span
+            class="cp"
+            ng-repeat="(key, value) in pages track by $index"
+            ng-class="{'active': key + 1 == curPage}"
+          >
+            <a ng-click="updatePage(key + 1)">{{key + 1}} </a>
+          </span>
+        </div>
       </div>
-      <span
-        ng-if="countryList && countryList.length"
-        ng-repeat="(key, country) in countryList"
-      >
-        <country info="country"></country>
-      </span>
-      <pre>{{countryList | json}}</pre>
+      <div ng-if="!showList">
+        <h3>displaying weather data!</h3>
+        <a class="cp" ng-click="updateState()">
+          <-- Go Back!
+        </a>
+        <div>
+          <label>Temperature</label> {{ weather.temp }}
+          <br />
+          <label>pressure</label> {{weather.pressure}}
+          <br />
+          <label>humidity</label> {{weather.humidity}}
+        </div>
+      </div>
     </div>
   </body>
 </html>

@@ -5,6 +5,7 @@ app.controller('mainController', [
   'httpService',
   function ($scope, httpService) {
     $scope.heading = 'My Weather report';
+    $scope.showList = true;
     $scope.allCountriesURL = 'https://restcountries.eu/rest/v2/all';
     $scope.className = 'grid';
     const weatherDetails = {
@@ -12,16 +13,58 @@ app.controller('mainController', [
       APPID: '794ee95e63c5a32aaf88cd813fa2e425',
     };
 
-    $scope.getData = function (url) {
+    let countryList = [];
+    const getWeatherReport = function (name) {
+      const url = `${weatherDetails.base}${name}&APPID=${weatherDetails.APPID}`;
       httpService.get(url).then(
         (data) => {
-          $scope.countryList = data.data;
-          // console.log($scope.countryList, ' countryList');
+          console.log('Country data ', data);
+          $scope.showList = false;
+          console.log(data.data.weather, ' weather icons');
+          $scope.weather = data.data.main;
         },
         (err) => {
-          console.log(err, ' from error block');
+          console.log(err);
         }
       );
+    };
+
+    app.filter('TempConverter', function () {
+      return function (input) {
+        console.log('test ', input);
+        return input - 273 + '°C';
+      };
+    });
+
+    $scope.openWeather = function (e) {
+      console.log(e, ' check event', e.capital);
+      getWeatherReport(e.capital);
+    };
+
+    $scope.updatePage = function (page) {
+      $scope.curPage = page;
+      const start = 16 * (page - 1),
+        end = 16 * page;
+      $scope.displayData = countryList.slice(start, end);
+    };
+    $scope.updateState = function () {
+      $scope.showList = !$scope.showList;
+    };
+
+    $scope.getData = function (url) {
+      if (!countryList.length) {
+        httpService.get(url).then(
+          (data) => {
+            countryList = data.data;
+            $scope.curPage = 1;
+            $scope.pages = new Array(parseInt(countryList.length / 16) + 1);
+            $scope.displayData = countryList.slice(0, 16);
+          },
+          (err) => {
+            console.log(err, ' from error block');
+          }
+        );
+      }
     };
   },
 ]);
