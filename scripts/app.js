@@ -35,6 +35,8 @@ app.controller('mainController', [
           $scope.weather = data.data.main;
         },
         (err) => {
+          alert(`Sorry!
+          No data found for this location`);
           console.log(err);
         }
       );
@@ -56,6 +58,7 @@ app.controller('mainController', [
       $scope.curPage = page;
       const start = 16 * (page - 1),
         end = 16 * page;
+
       if (filteredList.length === countryList.length) {
         $scope.displayData = filteredList.slice(start, end);
       } else {
